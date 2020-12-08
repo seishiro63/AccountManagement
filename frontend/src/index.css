@@ -1,13 +1,60 @@
 body {
-  margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  margin: auto;
+
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+label {
+  padding: 20px;
+}
+
+
+
+.header {
+  max-width: 1352px;
+  margin: auto;
+  -webkit-box-shadow: 1px 3px 5px 0px rgba(0,0,0,0.59); 
+  box-shadow: 1px 3px 5px 0px rgba(0,0,0,0.59);
+  background: #EDEDED;
+}
+
+.h1{
+  
+}
+
+#corps {
+  max-width: 1352px;
+  margin: auto;
+}
+
+#connection {
+  float: right;
+  margin-right: 7%;
+}
+
+#bandeau {
+  position: relative;
+  width: 80%;
+  height: 50px;
+  line-height: 50px;
+}
+
+#addAction {
+  width: 800px;
+  margin: auto;
+}
+
+#homeaccount {
+  margin-top: 10px;
+  position: left;
+  text-align: left;
 }
