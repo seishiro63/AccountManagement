@@ -64,6 +64,33 @@ createToken = () => {
     return token;
 }
 
+isUserLogged = (user) => {
+    if (loggedSession.length>0){
+        //searching by email
+        if(user.email){
+            for(let i=0; i<loggedSession.length; i++) {
+                if(user.email === loggedSession[i].email) {
+                    return true;
+                }
+            }
+        }
+        //searching by token
+        if(user.token){
+            for(let i=0; i<loggedSession.length; i++) {
+                if(user.token === loggedSession[i].token) {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+
+
+
+
+
 
 
 /**
@@ -153,8 +180,8 @@ app.post("/register", function(req, res) {
     //check if the email is available
     for(let i=0; i<registeredUsers.length; i++) {
         if(req.body.email === registeredUsers[i].email) {
-            console.error("REGISTER ERROR Registration failed : Username is already use");
-            return res.status(409).json({message:"Bad request : Username is already use"});
+            console.error("REGISTER ERROR Registration failed : " + req.body.email + " is already exist");
+            return res.status(409).json({message:"Bad request : " + req.body.email + " is already exist"});
         }
     }
 
@@ -183,37 +210,46 @@ app.post("/login", function(req, res) {
         console.error("REGISTER " + testRes.errorMsg);
         return res.status(400).json({message:"Bad Request"});
     }
-
-    console.log("LOGIN Login requested for " + req.body.email);
-
-    for(let i=0; i<registeredUsers.length; i++) {
-        if(registeredUsers[i].email === req.body.email) {
-            console.log("LOGIN User "+  req.body.email +" is available for the application");
-            myHash=getHash(req.body.password);
-            //console.log("LOGIN : hash stored for the user : " + registeredUsers[i].password);
-            //console.log("LOGIN : hash generated form pwd  : " + myHash);
-            if(myHash.localeCompare(registeredUsers[i].password) === 0){
-                console.log("LOGIN password confirmed");
-                let token = createToken();
-                let now = Date.now();
-                let session = {
-                    email: req.body.email,
-                    ttl: now + ttl_diff,
-                    token: token
+    
+    let userToTest = {
+        email:req.body.email,
+        token:""
+    }
+    if(isUserLogged(userToTest)){
+        console.error("LOGIN ERROR User allready connected.")
+        return res.status(403).json({message:"forbidden"});
+    }
+    else{
+        console.log("LOGIN Login requested for " + req.body.email);
+        console.log("Taille du tableau: " + registeredUsers.length);
+        for(let i=0; i<registeredUsers.length; i++) {
+            if(registeredUsers[i].email === req.body.email) {
+                console.log("LOGIN User "+  req.body.email +" is available for the application");
+                myHash=getHash(req.body.password);
+                //console.log("LOGIN : hash stored for the user : " + registeredUsers[i].password);
+                //console.log("LOGIN : hash generated form pwd  : " + myHash);
+                if(myHash.localeCompare(registeredUsers[i].password) === 0){
+                    console.log("LOGIN password confirmed");
+                    let token = createToken();
+                    let now = Date.now();
+                    let session = {
+                        email: req.body.email,
+                        ttl: now + ttl_diff,
+                        token: token
+                    }
+                    loggedSession.push(session);
+                    console.log("LOGIN session created : " + token);
+                    return res.status(200).json({token:token});
                 }
-                loggedSession.push(session);
-                console.log("LOGIN session created : " + token);
-                return res.status(200).json({token:token});
-            }
-            else {
-                console.error("LOGIN ERROR : authentication error");
-                return res.status(403).json({message:"forbidden"});
+                else {
+                    console.error("LOGIN ERROR : authentication error");
+                    return res.status(403).json({message:"forbidden"});
+                }
             }
         }
         console.error("LOGIN ERROR User don't exist in appilcation.")
-        return res.status(401).json({message:"User unauthorized"});
-    }
-    return res.status(403).json({message:"forbidden"});
+        return res.status(403).json({message:"forbidden"});
+    } 
 });
 
 
@@ -224,28 +260,36 @@ app.post("/login", function(req, res) {
  */
 app.post("/logout", function(req, res) {
     console.log("LOGOUT requested")
-    if(!req.headers.token){
-        console.error("LOGOUT ERROR No token sent in the requet");
-        return res.status(404).json({message:"nout found"});
-    }
-    if(registeredUsers.length>0){
-        for(let i=0; i<registeredUsers.length; i++) {
+    if(loggedSession.length>0){
+        
+        //Basic parameter check of the request (set in function)
+        let testRes = checkRequestCorps(req);
+        if(!testRes.flgIsChkOk){
+            console.error("REGISTER " + testRes.errorMsg);
+            return res.status(400).json({message:"Bad Request"});
+        }
+
+        if(!req.headers.token){
+            console.error("LOGOUT ERROR No token sent in the requet");
+            return res.status(404).json({message:"nout found"});
+        }
+        for(let i=0; i<loggedSession.length; i++) {
+            console.log("loop : " + i);
+            console.log(loggedSession[i]);
             if(loggedSession[i].token === req.headers.token) {
                 console.log("LOGOUT user : " + loggedSession[i].email);
                 loggedSession.splice(i, 1);
                 return res.status(200).json({message:"success"});
             }
-        }
-    }
-    else{
-        console.error("LOGOUT ERROR No user registred for the application !!");
+        }   
+        console.error("LOGOUT ERROR Session not found for token: " + req.headers.token);
         return res.status(404).json({message:"not found"});
     }
-    console.error("LOGOUT ERROR Session not found for token: " + req.header.token);
-    return res.status(404).json({message:"not found"});
+    else {
+        console.error("LOGOUT ERROR No user connected to the application");
+        return res.status(404).json({message:"not found"});
+    }
 });
-
-
 
 
 
