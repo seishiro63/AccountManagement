@@ -5,39 +5,44 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 
-//const apiroutes = require("./routes/apiroutes"); //all routes for the application
+const apiroutes = require("./routes/apiroutes"); //all routes for the application
 
 const crypto = require('crypto');
 //const secret = 'thisissecret';
 const secret = 'Hac in hora Sine mora Corde pulsum tangite Quod per sortem Sternit forterm Mecum omnes plangite'
 const algorithm = 'sha256';
 
+
+
+
 /**
  * Globales values
  */
 let LISTENING_PORT = 3101;
 let PASSWORD_MIN_LENGTH = 14;
-let EMAIL_MIN_LENGTH = 5;
+let LOGIN_MIN_LENGTH = 5;
 
 //session stuff:
 const ttl_diff = 36000000; //ttl = time to live (how long the session will stay) - here 1h
 
 
-let id = 100;
-
-let app = express(); //initialise
-
-app.use(bodyParser.json());
-
-
-
-
 /**
- * DATABASES
+ * Temporary - removed when the DB will be live
  */
+let id = 100; //start of index
+
+//Databases
 let database = [];          //list of data
 let registeredUsers = [];   //list of users available for the application
 let loggedSession = [];     //array of live sessions.   
+
+
+
+
+
+let app = express(); //initialise
+app.use(bodyParser.json());
+
 
 
 
@@ -47,10 +52,12 @@ let loggedSession = [];     //array of live sessions.
  * MIDDLEWARE
  */
 //Generate hash for encryption
-function getHash(text) {
+function getHash(key) {
     const hash = crypto.createHmac(algorithm, secret)
-    .update(text)
-    .digest('hex');
+                       //.createHash("sha256")
+                       .update(key)
+                       .digest('hex');
+    crypto.createHash("sha256").update(key).digest("hex");
     return hash;
 }
 
@@ -64,20 +71,11 @@ createToken = () => {
     return token;
 }
 
-isUserLogged = (user) => {
+isSessionExist = (login) => {
     if (loggedSession.length>0){
-        //searching by email
-        if(user.email){
+        if(user.login){
             for(let i=0; i<loggedSession.length; i++) {
-                if(user.email === loggedSession[i].email) {
-                    return true;
-                }
-            }
-        }
-        //searching by token
-        if(user.token){
-            for(let i=0; i<loggedSession.length; i++) {
-                if(user.token === loggedSession[i].token) {
+                if(user.login === loggedSession[i].login) {
                     return true;
                 }
             }
@@ -102,7 +100,7 @@ isUserLogged = (user) => {
  * 
  *  The function will check :
  *      - if the body is present
- *      - if the email is present and respect the minimum length
+ *      - if the login is present and respect the minimum length
  *      - if the password is present and respect the minimum length
  * 
  * @param req : the request received
@@ -127,18 +125,18 @@ function checkRequestCorps(req) {
     }
 
     //if request is incomplete:
-    if(!req.body.password || !req.body.email){
-        if (!req.body.email) message="No email ";
+    if(!req.body.password || !req.body.login){
+        if (!req.body.login) message="No login ";
         if(!req.body.password) message="No password";
         returnObj.flgIsChkOk = false;
         returnObj.errorMsg = "ERROR parameter incorect in req: " + message;
         return returnObj;
     }
     
-    //checking size of password and email
-    if(req.body.password.length < PASSWORD_MIN_LENGTH || req.body.email.length < EMAIL_MIN_LENGTH){
+    //checking size of password and login
+    if(req.body.password.length < PASSWORD_MIN_LENGTH || req.body.login.length < LOGIN_MIN_LENGTH){
         if (req.body.password.length < PASSWORD_MIN_LENGTH) message = "Password length insufficient ";
-        if (req.body.email.length < EMAIL_MIN_LENGTH) message = "Username length insufficient ";
+        if (req.body.login.length < LOGIN_MIN_LENGTH) message = "Username length insufficient ";
         returnObj.flgIsChkOk = false;
         returnObj.errorMsg = "ERROR parameter incorect in req: " + message;
         return returnObj;
@@ -177,11 +175,11 @@ app.post("/register", function(req, res) {
         return res.status(400).json({message:"Bad Request"});
     }
 
-    //check if the email is available
+    //check if the login is available
     for(let i=0; i<registeredUsers.length; i++) {
-        if(req.body.email === registeredUsers[i].email) {
-            console.error("REGISTER ERROR Registration failed : " + req.body.email + " is already exist");
-            return res.status(409).json({message:"Bad request : " + req.body.email + " is already exist"});
+        if(req.body.login === registeredUsers[i].login) {
+            console.error("REGISTER ERROR Registration failed : " + req.body.login + " is already exist");
+            return res.status(409).json({message:"Bad request : " + req.body.login + " is already exist"});
         }
     }
 
@@ -189,11 +187,12 @@ app.post("/register", function(req, res) {
     myHash = getHash(req.body.password);
     console.log("REGISTER hash genetared: " + myHash);
     let user = {
-        email:req.body.email,
-        password:myHash
+        login:req.body.login,
+        password:myHash,
+        email:req.body.email
     }
     registeredUsers.push(user);
-    console.log("REGISTER Registration of new user " + user.email + " succeed");
+    console.log("REGISTER Registration of new user " + user.login + " succeed");
     return res.status(200).json({message:"success"});     
 });
 
@@ -211,20 +210,17 @@ app.post("/login", function(req, res) {
         return res.status(400).json({message:"Bad Request"});
     }
     
-    let userToTest = {
-        email:req.body.email,
-        token:""
-    }
-    if(isUserLogged(userToTest)){
+    //limit the number of session to one.
+    if(isSessionExist(req.body.login)){
         console.error("LOGIN ERROR User allready connected.")
         return res.status(403).json({message:"forbidden"});
     }
     else{
-        console.log("LOGIN Login requested for " + req.body.email);
+        console.log("LOGIN Login requested for " + req.body.login);
         console.log("Taille du tableau: " + registeredUsers.length);
         for(let i=0; i<registeredUsers.length; i++) {
-            if(registeredUsers[i].email === req.body.email) {
-                console.log("LOGIN User "+  req.body.email +" is available for the application");
+            if(registeredUsers[i].login === req.body.login) {
+                console.log("LOGIN User "+  req.body.login +" is available for the application");
                 myHash=getHash(req.body.password);
                 //console.log("LOGIN : hash stored for the user : " + registeredUsers[i].password);
                 //console.log("LOGIN : hash generated form pwd  : " + myHash);
@@ -233,7 +229,7 @@ app.post("/login", function(req, res) {
                     let token = createToken();
                     let now = Date.now();
                     let session = {
-                        email: req.body.email,
+                        login: req.body.login,
                         ttl: now + ttl_diff,
                         token: token
                     }
@@ -274,10 +270,8 @@ app.post("/logout", function(req, res) {
             return res.status(404).json({message:"nout found"});
         }
         for(let i=0; i<loggedSession.length; i++) {
-            console.log("loop : " + i);
-            console.log(loggedSession[i]);
             if(loggedSession[i].token === req.headers.token) {
-                console.log("LOGOUT user : " + loggedSession[i].email);
+                console.log("LOGOUT user : " + loggedSession[i].login);
                 loggedSession.splice(i, 1);
                 return res.status(200).json({message:"success"});
             }
