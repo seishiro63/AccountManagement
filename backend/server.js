@@ -5,10 +5,12 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 
-const apiroutes = require("./routes/apiroutes"); //all routes for the application
+//all routes for the application : 
+const apiroutes = require("./routes/apiroutes"); 
 
+
+//crypto : 
 const crypto = require('crypto');
-//const secret = 'thisissecret';
 const secret = 'Hac in hora Sine mora Corde pulsum tangite Quod per sortem Sternit forterm Mecum omnes plangite'
 const algorithm = 'sha256';
 
@@ -18,12 +20,13 @@ const algorithm = 'sha256';
 /**
  * Globales values
  */
-let LISTENING_PORT = 3101;
-let PASSWORD_MIN_LENGTH = 14;
-let LOGIN_MIN_LENGTH = 5;
+const LISTENING_PORT = 3101;
+const PASSWORD_MIN_LENGTH = 4;
+const LOGIN_MIN_LENGTH = 4;
 
 //session stuff:
 const ttl_diff = 36000000; //ttl = time to live (how long the session will stay) - here 1h
+
 
 
 /**
@@ -32,12 +35,10 @@ const ttl_diff = 36000000; //ttl = time to live (how long the session will stay)
 let id = 100; //start of index
 
 //Databases
-let database = [];          //list of data
 let registeredUsers = [];   //list of users available for the application
 let loggedSession = [];     //array of live sessions.   
 
-
-
+let databaseHome = [];          //list of data for home
 
 
 let app = express(); //initialise
@@ -71,7 +72,7 @@ createToken = () => {
     return token;
 }
 
-isSessionExist = (login) => {
+isSessionExist = (user) => {
     if (loggedSession.length>0){
         if(user.login){
             for(let i=0; i<loggedSession.length; i++) {
@@ -84,8 +85,35 @@ isSessionExist = (login) => {
     return false;
 }
 
+isUserLogged = (req, res, next) => {
+    if(!req.headers.token) {
+        return res.status(403).json({message:"forbidden"});
+    }
+    //checking the sessions:
+    for(let i=0; i<loggedSession.length; i++) {
+        //if I found the token
+        if(req.headers.token === loggedSession[i].token) {
+            let now = Date.now();
+            //if the session is timed out
+            if(now > loggedSession[i].ttl) {
+                loggedSession.splice(i, 1);
+                return res.status(403).json({message:"forbidden"});
+            }
+            loggedSession[i].ttl = now + ttl_diff;
 
+            req.session = {};
+            req.session.login = loggedSession[i].login;
+            return next();
+        }
+    }
+    //didn't find anything:
+    return res.status(403).json({message:"forbidden"});
 
+    /* IMPORTANT
+        the 403 error are important to reset the frontend.
+        Otherways the user can be blocked with an invalid key.
+    */
+}
 
 
 
@@ -192,7 +220,8 @@ app.post("/register", function(req, res) {
         email:req.body.email
     }
     registeredUsers.push(user);
-    console.log("REGISTER Registration of new user " + user.login + " succeed");
+    console.log("REGISTER Registration of new user " + user.login);
+    console.log("REGISTER Done");
     return res.status(200).json({message:"success"});     
 });
 
@@ -216,8 +245,7 @@ app.post("/login", function(req, res) {
         return res.status(403).json({message:"forbidden"});
     }
     else{
-        console.log("LOGIN Login requested for " + req.body.login);
-        console.log("Taille du tableau: " + registeredUsers.length);
+        console.log("LOGIN Login requested for user: " + req.body.login);
         for(let i=0; i<registeredUsers.length; i++) {
             if(registeredUsers[i].login === req.body.login) {
                 console.log("LOGIN User "+  req.body.login +" is available for the application");
@@ -235,6 +263,7 @@ app.post("/login", function(req, res) {
                     }
                     loggedSession.push(session);
                     console.log("LOGIN session created : " + token);
+                    console.log("LOGIN Done");
                     return res.status(200).json({token:token});
                 }
                 else {
@@ -259,20 +288,23 @@ app.post("/logout", function(req, res) {
     if(loggedSession.length>0){
         
         //Basic parameter check of the request (set in function)
+        /* => if not commented requere passord to disconnect
+        even if there is no pwd check....
         let testRes = checkRequestCorps(req);
         if(!testRes.flgIsChkOk){
             console.error("REGISTER " + testRes.errorMsg);
             return res.status(400).json({message:"Bad Request"});
         }
-
+        */
         if(!req.headers.token){
             console.error("LOGOUT ERROR No token sent in the requet");
             return res.status(404).json({message:"nout found"});
         }
         for(let i=0; i<loggedSession.length; i++) {
             if(loggedSession[i].token === req.headers.token) {
-                console.log("LOGOUT user : " + loggedSession[i].login);
+                console.log("LOGOUT user: " + loggedSession[i].login);
                 loggedSession.splice(i, 1);
+                console.log("LOGOUT Done");
                 return res.status(200).json({message:"success"});
             }
         }   
@@ -286,6 +318,8 @@ app.post("/logout", function(req, res) {
 });
 
 
+//using the routes if the user is connected: 
+app.use("/api", isUserLogged, apiroutes);
 
 /**
  * Start listening
@@ -337,11 +371,14 @@ console.log("Running on port " + LISTENING_PORT);
 
 
 
-
-console.log("Inserting data for tests");
 /*
  * Création d'un jeu de donnée:
  */
+
+
+// Auth : 
+
+
 /*
 function getTime() { 
     let today = new Date();
@@ -381,4 +418,3 @@ let item3 = {
 }
 database.push(item3);
 */
-console.log("Insert done");

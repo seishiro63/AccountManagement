@@ -28,6 +28,7 @@ export default class LoginForm extends React.Component {
         }
         if (event.target.name === "register") {
             this.props.register(user);
+            this.props.login(user);
         }
     }
 

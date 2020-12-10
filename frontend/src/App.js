@@ -21,7 +21,7 @@ class App extends React.Component {
       list:[], //The list to display.
       isLogged:false,
       token:"", //store the tocken form authentification.
-      username:"",
+      login:"",
 
       list:[
         {date:"01/12/2020", label:"list", amount:"85.26"},
@@ -46,9 +46,9 @@ class App extends React.Component {
   }
 
 
-  /**
+  /***************************************************************
    * AUTH PART
-   */
+   **************************************************************/
   register = (user) => {
     let request = {
       method:"POST",
@@ -82,10 +82,9 @@ class App extends React.Component {
 					this.setState({
             isLogged:true,
             token:data.token,
-            username: user.username //storing username for display.
+            login: user.login, //storing login for display.
 					},() => {
 						this.saveToStorage();
-						this.getList();
 					})
 				}).catch(error => {
 					console.log("Failed to parse JSON. Error:",error);
@@ -120,33 +119,104 @@ class App extends React.Component {
      }).catch();
   }
 
+  /**
+   * Get all the accout for a user
+   */
+  getList = (path) => {
+  let request = {
+      method:"GET",
+      mode:"cors",
+      headers:{"Content-type":"application/json",
+              token:this.state.token}
+    }
+    fetch(path, request).then(response => {
+      if(response.ok) { //status 200
+        response.json().then(data => {
+          this.setState({
+            list:data
+          }, () => {
+                    this.saveToStorage();
+                  }
+          )
+        }).catch(error => {
+          console.log("Parsing of JSON failed. Reason: ", error);
+        });
+      } else {
+        if (response.status === 403) {
+          this.clearState();
+          console.log("Session expired. Logging you out.");
+        }
+        console.log("Server resond with a status: " + response.status);
+      }
+    }).catch(error => { //handeling error 400+
+      console.log("Server respond whith an error. Reason: " + error);
+    });
+  }
+
+  /*
+   * store the information returned by the server
+   */
+  saveToStorage = () => {
+    sessionStorage.setItem("state", JSON.stringify(this.state))
+  }
+
+  // to manage idle session:
+  clearState =() => {
+    this.setState({
+      isLogged:false,
+      list:[],
+      token:""
+    }, () => {
+      this.saveToStorage();
+    })
+  }
+
+
+
+
+
+
+
+
+
+
+
+  /***************************************************************
+   * RENDER
+   **************************************************************/ 
   render() {
+
+    console.log("App - login transmis a header: " + this.state.login)
 
     return (
       <div className="App">
         <div className="header">
           <ConnexionHeaderForm isLogged={this.state.isLogged}
                                logout={this.logout}
-                               username={this.state.username}/>
+                               login={this.state.login}
+                               token={this.state.token}/>
           <NavBarForm/>
         </div>
 
         <div id="corps">
         <Switch>
           <Route exact path="/" render={() => this.state.isLogged ?
-            (<Redirect to="/"/>) 
+            (<Redirect to="/home"/>) 
             :
             (<LoginForm login={this.login}/>)
           }/>
-          <Route exact path="/register">
-            <RegisterForm register={this.register} />
-          </Route>
-          <Route exact path="/" render={ () => (<HomeForm/>)} />
-          <Route exact path="/lastaction" render={ () => (<HomeForm/>)} />
-          <Route exact path="/addaction" render={ () => (<AddActionForm list={this.state.list}/>)} />
-          <Route exact path="/lastactions" render={ () => (<AddActionList list={this.state.lastactions}/>)} />
-          <Route exact path="/history" render={ () => (<AddActionList list={this.state.history}  />)} />
-
+          <Route exact path="/register" render={() => this.state.isLogged ?
+            (<Redirect to="/home"/>) 
+            :
+            (<RegisterForm login={this.login}
+                          register={this.register} />)
+          }/>
+          <Route exact path="/home" render={ () => this.state.isLogged ?
+            (<HomeForm getList={this.getList}
+                       list={this.state.list}/>)
+            :
+            (<Redirect to="/" />)
+          } />
         </Switch>
         </div>
       </div>      
@@ -155,3 +225,14 @@ class App extends React.Component {
 }
 
 export default App;
+
+
+/*
+
+          <Route exact path="/" render={ () => (<HomeForm/>)} />
+          <Route exact path="/lastaction" render={ () => (<HomeForm/>)} />
+          <Route exact path="/addaction" render={ () => (<AddActionForm list={this.state.list}/>)} />
+          <Route exact path="/lastactions" render={ () => (<AddActionList list={this.state.lastactions}/>)} />
+          <Route exact path="/history" render={ () => (<AddActionList list={this.state.history}  />)} />
+
+*/

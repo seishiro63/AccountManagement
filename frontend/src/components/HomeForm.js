@@ -1,11 +1,25 @@
 import React from 'react';
-import {Form, Button, Menu, Dropdown} from 'semantic-ui-react';
+import {Form, Button, Table, TableRow, Row, Item} from 'semantic-ui-react';
 import {Link} from 'react-router-dom';
 
 export default class HomeForm extends React.Component {
    
+    constructor(props) {
+        super(props);
+        this.props.getList("/api/accountlist");
+    }
 
     render() {
+        let items = this.props.list.map((item, index) => {
+            return (
+                /*
+                <Row item={item} key={item.id} handleRemoveButton={this.handleRemoveButton} 
+                                               handleEditButton={this.handleEditButton} 
+                />
+                */
+               "coin"
+            )
+        })
 
         return(
             <div id="home">
@@ -30,6 +44,22 @@ export default class HomeForm extends React.Component {
                         <Link to="/history"><Button>see history</Button></Link>
                     </div>
                 </Form>
+            
+
+            <Table striped>
+                <Table.Header>
+                    <Table.Row>
+                        <Table.HeaderCell>Item type</Table.HeaderCell>
+                        <Table.HeaderCell>Count</Table.HeaderCell>
+                        <Table.HeaderCell>Price</Table.HeaderCell>
+                        <Table.HeaderCell>Remove</Table.HeaderCell>
+                        <Table.HeaderCell>Edit</Table.HeaderCell>
+                    </Table.Row>
+                </Table.Header>
+                <Table.Body>
+                    {items}
+                </Table.Body>
+            </Table>
             </div>
         )
     }

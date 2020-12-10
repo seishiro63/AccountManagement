@@ -32,52 +32,50 @@ export default class LoginForm extends React.Component {
 
 
     render() {
-        
-        //if(!this.props.register){
-            return (
-                <div style={{width:500, margin:"auto", paddingTop:"20px", textAlign:"left"}}>
+        return (
+            <div style={{width:500, margin:"auto", paddingTop:"20px", textAlign:"left"}}>
+            <Form>
+                <label>Please singin</label>
+                <List>
+                    <List.Item>
+                        <Form.Input fluid label='Login' 
+                                    placeholder='Login' 
+                                    name='login'
+                                    onChange={this.onChange}
+                                    value={this.state.login}/>
+                    </List.Item>
+                    <List.Item>
+                        <Form.Input fluid label='Password' 
+                                    placeholder='password' 
+                                    name='password'
+                                    type="password" 
+                                    onChange={this.onChange} 
+                                    value={this.state.password}/>
+                    </List.Item>
+                    <List.Item>
+                        <div style={{textAlign:"center"}}>
+                            <Button onClick={this.onSubmit} name="login">Login</Button>
+                        </div>
+                    </List.Item>
+                </List>
+            </Form>
+
+            <div style={{width:500, margin:"auto", paddingTop:"20px", textAlign:"left"}}>
                 <Form>
-                    <label>You allready have an account, please singin</label>
+                    <label>Or create an account</label>
                     <List>
                         <List.Item>
-                            <Form.Input fluid label='Login' 
-                                        placeholder='Login' 
-                                        name='loginlogin'
-                                        onChange={this.onChange}
-                                        value={this.state.login}/>
-                        </List.Item>
-                        <List.Item>
-                            <Form.Input fluid label='Password' 
-                                        placeholder='password' 
-                                        name='passwordlogin'
-                                        type="password" 
-                                        onChange={this.onChange} 
-                                        value={this.state.password}/>
-                        </List.Item>
-                        <List.Item>
                             <div style={{textAlign:"center"}}>
-                            <Button onClick={this.onSubmit} name="login">Login</Button>
+                                <Link to="/register">
+                                    <Button >Register</Button>
+                                </Link>
                             </div>
                         </List.Item>
                     </List>
                 </Form>
+            </div>
 
-                <div style={{width:500, margin:"auto", paddingTop:"20px", textAlign:"left"}}>
-                    <Form>
-                        <label>Create an account</label>
-                        <List>
-                            <List.Item>
-                                <div style={{textAlign:"center"}}>
-                                    <Link to="/register">
-                                        <Button >Register</Button>
-                                    </Link>
-                                </div>
-                            </List.Item>
-                        </List>
-                    </Form>
-                </div>
-
-                </div>
-            )
+            </div>
+        )
     }
 }
