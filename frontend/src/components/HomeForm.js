@@ -1,14 +1,29 @@
 import React from 'react';
-import {Form, Button, Table, TableRow, Row, Item} from 'semantic-ui-react';
+import {Form, Button, Table} from 'semantic-ui-react';
 import {Link} from 'react-router-dom';
 
 export default class HomeForm extends React.Component {
    
     constructor(props) {
         super(props);
-        this.props.getList("/api/accountlist");
+        
     }
 
+    /**
+     * componentWillMount
+     *  Lifecycle Methods
+     * componentWillMount is executed before rendering, on both the server and the client side
+     */
+    componentWillMount (){
+        console.log("HomeForm request list of account");
+        this.props.getList("/api/accountlist");
+    }
+    /*
+    componentDidMount()  {
+        console.log("HomeForm request list of account");
+        this.props.getList("/api/accountlist");
+    }
+    */
     render() {
         let items = this.props.list.map((item, index) => {
             return (

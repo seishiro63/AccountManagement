@@ -1,5 +1,5 @@
 import React from 'react';
-import {Table, Button, Dropdown} from 'semantic-ui-react';
+import {Table, Button} from 'semantic-ui-react';
 
 export default class EditRow extends React.Component {
 

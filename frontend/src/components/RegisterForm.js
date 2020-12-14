@@ -1,6 +1,5 @@
 import React from 'react';
-import {Header, List, Form, Button} from 'semantic-ui-react';
-import {Link} from 'react-router-dom';
+import {List, Form, Button} from 'semantic-ui-react';
 
 export default class LoginForm extends React.Component {
 

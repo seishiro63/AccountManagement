@@ -235,43 +235,46 @@ app.post("/login", function(req, res) {
     //Basic parameter check of the request (set in function)
     let testRes = checkRequestCorps(req);
     if(!testRes.flgIsChkOk){
-        console.error("REGISTER " + testRes.errorMsg);
+        console.error("LOGIN " + testRes.errorMsg);
         return res.status(400).json({message:"Bad Request"});
     }
     
     //limit the number of session to one.
-    if(isSessionExist(req.body.login)){
-        console.error("LOGIN ERROR User allready connected.")
-        return res.status(403).json({message:"forbidden"});
+    for(let i=0; i<registeredUsers.length; i++) {
+        if(registeredUsers[i].login === req.body.login){
+            console.log("LOGIN Session existing for user " + req.body.login + " => previous session removed.");
+            loggedSession.splice(i, 1);
+        }
     }
-    else{
-        console.log("LOGIN Login requested for user: " + req.body.login);
-        for(let i=0; i<registeredUsers.length; i++) {
-            if(registeredUsers[i].login === req.body.login) {
-                console.log("LOGIN User "+  req.body.login +" is available for the application");
-                myHash=getHash(req.body.password);
-                //console.log("LOGIN : hash stored for the user : " + registeredUsers[i].password);
-                //console.log("LOGIN : hash generated form pwd  : " + myHash);
-                if(myHash.localeCompare(registeredUsers[i].password) === 0){
-                    console.log("LOGIN password confirmed");
-                    let token = createToken();
-                    let now = Date.now();
-                    let session = {
-                        login: req.body.login,
-                        ttl: now + ttl_diff,
-                        token: token
-                    }
-                    loggedSession.push(session);
-                    console.log("LOGIN session created : " + token);
-                    console.log("LOGIN Done");
-                    return res.status(200).json({token:token});
+
+    //Creating user session
+    console.log("LOGIN Login requested for user: " + req.body.login);
+    for(let i=0; i<registeredUsers.length; i++) {
+        if(registeredUsers[i].login === req.body.login) {
+            console.log("LOGIN User "+  req.body.login +" is available for the application");
+            myHash=getHash(req.body.password);
+            //console.log("LOGIN : hash stored for the user : " + registeredUsers[i].password);
+            //console.log("LOGIN : hash generated form pwd  : " + myHash);
+            if(myHash.localeCompare(registeredUsers[i].password) === 0){
+                console.log("LOGIN password confirmed");
+                let token = createToken();
+                let now = Date.now();
+                let session = {
+                    login: req.body.login,
+                    ttl: now + ttl_diff,
+                    token: token
                 }
-                else {
-                    console.error("LOGIN ERROR : authentication error");
-                    return res.status(403).json({message:"forbidden"});
-                }
+                loggedSession.push(session);
+                console.log("LOGIN session created : " + token);
+                console.log("LOGIN Done");
+                return res.status(200).json({token:token});
+            }
+            else {
+                console.error("LOGIN ERROR : authentication error");
+                return res.status(403).json({message:"forbidden"});
             }
         }
+        
         console.error("LOGIN ERROR User don't exist in appilcation.")
         return res.status(403).json({message:"forbidden"});
     } 

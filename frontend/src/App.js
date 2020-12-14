@@ -22,26 +22,6 @@ class App extends React.Component {
       isLogged:false,
       token:"", //store the tocken form authentification.
       login:"",
-
-      list:[
-        {date:"01/12/2020", label:"list", amount:"85.26"},
-        {date:"05/12/2020", label:"petrol", amount:"59.43"},
-        {date:"08/12/2020", label:"chocolat", amount:"43.52"},
-        {date:"10/12/2020", label:"Xmas present", amount:"156.53"},
-      ],
-      lastactions:[
-        {date:"01/12/2020", label:"KMarcket", amount:"85.26"},
-        {date:"05/12/2020", label:"petrol", amount:"59.43"},
-        {date:"08/12/2020", label:"chocolat", amount:"43.52"},
-        {date:"10/12/2020", label:"Xmas present", amount:"156.53"},
-      ],
-
-      history:[
-        {date:"01/01/2018", label:"Colis EcoParcel", amount:90.20},
-        {date:"20/04/2018", label:"Posti", amount:11.80},
-        {date:"01/12/2018", label:"Plein", amount:37.03},
-        {date:"01/06/2019", label:"XXL", amount:29.80}
-      ]
     };
   }
 
@@ -58,7 +38,7 @@ class App extends React.Component {
     }
     fetch("/register", request).then(response => {
       if(response.ok) {
-        alert("register success");
+        //alert("register success");
       }
       else {
         console.log("Server responded with a status : ", response.status);
@@ -84,6 +64,8 @@ class App extends React.Component {
             token:data.token,
             login: user.login, //storing login for display.
 					},() => {
+            //call the list
+            this.getList();
 						this.saveToStorage();
 					})
 				}).catch(error => {
@@ -129,6 +111,8 @@ class App extends React.Component {
       headers:{"Content-type":"application/json",
               token:this.state.token}
     }
+    console.log("Request getlist sent to server on path " + path);
+    //console.log(request);
     fetch(path, request).then(response => {
       if(response.ok) { //status 200
         response.json().then(data => {
@@ -151,6 +135,18 @@ class App extends React.Component {
     }).catch(error => { //handeling error 400+
       console.log("Server respond whith an error. Reason: " + error);
     });
+  }
+
+  /*
+   * Prevent loosing the session on refresh.
+   */
+  componentDidMount() {
+    if(sessionStorage.getItem("state")) {
+      let state = JSON.parse(sessionStorage.getItem("state"));
+      this.setState(state, () => {
+        //this.getList();
+      })
+    }
   }
 
   /*
@@ -186,8 +182,6 @@ class App extends React.Component {
    **************************************************************/ 
   render() {
 
-    console.log("App - login transmis a header: " + this.state.login)
-
     return (
       <div className="App">
         <div className="header">
@@ -205,13 +199,13 @@ class App extends React.Component {
             :
             (<LoginForm login={this.login}/>)
           }/>
-          <Route exact path="/register" render={() => this.state.isLogged ?
-            (<Redirect to="/home"/>) 
+          <Route path="/register" render={() => this.state.isLogged ?
+            (<Redirect to="/"/>)  
             :
             (<RegisterForm login={this.login}
                           register={this.register} />)
           }/>
-          <Route exact path="/home" render={ () => this.state.isLogged ?
+          <Route path="/home" render={ () => this.state.isLogged ?
             (<HomeForm getList={this.getList}
                        list={this.state.list}/>)
             :

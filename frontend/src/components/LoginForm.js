@@ -1,5 +1,5 @@
 import React from 'react';
-import {Header, List, Form, Button} from 'semantic-ui-react';
+import {List, Form, Button} from 'semantic-ui-react';
 import {Link} from 'react-router-dom';
 
 export default class LoginForm extends React.Component {
@@ -26,6 +26,10 @@ export default class LoginForm extends React.Component {
         }
 
         if (event.target.name === "login") {
+            /**
+             * TO DO
+             * Encrypt the password to sent it to backend
+             */
             this.props.login(user);
         }
     } 
