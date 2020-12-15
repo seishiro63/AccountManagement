@@ -21,8 +21,8 @@ const algorithm = 'sha256';
  * Globales values
  */
 const LISTENING_PORT = 3101;
-const PASSWORD_MIN_LENGTH = 4;
-const LOGIN_MIN_LENGTH = 4;
+//const PASSWORD_MIN_LENGTH = 4;
+//const LOGIN_MIN_LENGTH = 4;
 
 //session stuff:
 const ttl_diff = 36000000; //ttl = time to live (how long the session will stay) - here 1h
@@ -161,6 +161,7 @@ function checkRequestCorps(req) {
         return returnObj;
     }
     
+    /*
     //checking size of password and login
     if(req.body.password.length < PASSWORD_MIN_LENGTH || req.body.login.length < LOGIN_MIN_LENGTH){
         if (req.body.password.length < PASSWORD_MIN_LENGTH) message = "Password length insufficient ";
@@ -169,7 +170,7 @@ function checkRequestCorps(req) {
         returnObj.errorMsg = "ERROR parameter incorect in req: " + message;
         return returnObj;
     }
-
+    */
     return returnObj;
 }
 

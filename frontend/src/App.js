@@ -113,7 +113,8 @@ class App extends React.Component {
     }
     console.log("Request getlist sent to server on path " + path);
     //console.log(request);
-    fetch(path, request).then(response => {
+    //fetch(path, request).then(response => {
+    fetch("/api/accountlist", request).then(response => {
       if(response.ok) { //status 200
         response.json().then(data => {
           this.setState({

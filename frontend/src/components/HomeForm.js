@@ -14,10 +14,12 @@ export default class HomeForm extends React.Component {
      *  Lifecycle Methods
      * componentWillMount is executed before rendering, on both the server and the client side
      */
+    /*
     componentWillMount (){
         console.log("HomeForm request list of account");
         this.props.getList("/api/accountlist");
     }
+    */
     /*
     componentDidMount()  {
         console.log("HomeForm request list of account");
