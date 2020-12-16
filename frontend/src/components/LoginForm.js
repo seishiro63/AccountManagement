@@ -87,4 +87,10 @@ class LoginForm extends React.Component {
     }
 }
 
-export default connect()(LoginForm);
+const mapStateToProps = (state) => {
+	return {
+		token:state.login.token
+	}
+}
+
+export default connect(mapStateToProps)(LoginForm);

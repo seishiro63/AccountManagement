@@ -244,8 +244,7 @@ const mapStateToProps = (state) => {
 	}
 }
 
-export default App;
-
+export default (mapStateToProps)(App);
 
 /*
 
