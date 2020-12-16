@@ -1,4 +1,4 @@
-import logo from './logo.svg';
+//import logo from './logo.svg';
 import './App.css';
 
 
@@ -11,8 +11,10 @@ import NavBarForm from './components/NavBar';
 import LoginForm from './components/LoginForm';
 import RegisterForm from './components/RegisterForm';
 import HomeForm from './components/HomeForm';
-import AddActionForm from './components/ActionList/AddActionForm';
-import AddActionList from './components/ActionList/AddActionList';
+//import AddActionForm from './components/ActionList/AddActionForm';
+//import AddActionList from './components/ActionList/AddActionList';
+
+import {connect} from 'react-redux';
 
 class App extends React.Component {
 
@@ -195,7 +197,20 @@ class App extends React.Component {
         </div>
 
         <div id="corps">
-            (<LoginForm/>)
+          <Switch>
+            <Route exact path="/" render={() => this.state.isLogged ?
+              (<Redirect to="/home"/>) :
+              (<LoginForm/>)
+            }/>
+            <Route path="/register" render={() => this.state.isLogged ?
+              (<Redirect to="/"/>) :
+              (<RegisterForm />)
+            }/>
+            <Route path="/home" render={ () => this.state.isLogged ?
+              (<HomeForm />) :
+              (<Redirect to="/" />)
+            } />
+          </Switch>
         </div>
       </div>      
     );
@@ -244,7 +259,7 @@ const mapStateToProps = (state) => {
 	}
 }
 
-export default (mapStateToProps)(App);
+export default connect(mapStateToProps)(App);
 
 /*
 

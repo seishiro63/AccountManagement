@@ -1,7 +1,10 @@
 import React from 'react';
 import {List, Form, Button} from 'semantic-ui-react';
 
-export default class LoginForm extends React.Component {
+import {connect} from 'react-redux';
+import {register, login} from '../actions/loginActions';
+
+class RegisterForm extends React.Component {
 
     constructor(props) {
         super(props);
@@ -26,8 +29,8 @@ export default class LoginForm extends React.Component {
             email: this.state.email
         }
         if (event.target.name === "register") {
-            this.props.register(user);
-            this.props.login(user);
+            this.props.dispatch(register(user));
+            this.props.dispatch(login(user));
         }
     }
 
@@ -72,3 +75,11 @@ export default class LoginForm extends React.Component {
         )
     }
 }
+
+const mapStateToProps = (state) => {
+	return {
+		token:state.login.token
+	}
+}
+
+export default connect(mapStateToProps)(RegisterForm);

@@ -3,12 +3,13 @@ import RowHome from './ActionList/RowHome';
 import {Form, Button, Table} from 'semantic-ui-react';
 import {Link} from 'react-router-dom';
 
+import {connect} from 'react-redux';
 
-export default class HomeForm extends React.Component {
+
+class HomeForm extends React.Component {
    
     constructor(props) {
         super(props);
-        
     }
 
     /**
@@ -35,9 +36,10 @@ export default class HomeForm extends React.Component {
         console.log(items); 
         return(
             <div id="home">
-                    {items}
+                {items}
             </div>
         )
     }
 
 }
+export default connect()(HomeForm);

@@ -8,7 +8,7 @@ import {BrowserRouter} from 'react-router-dom'
 import 'semantic-ui-css/semantic.min.css'
 
 /**
- * Redux
+ * Redux:
  * an action is called, the reducer check what action you did.
  * Based on the action, the reducer will modify the store.
  */
@@ -20,27 +20,31 @@ import {createStore,applyMiddleware,combineReducers} from 'redux';
 
 //REDUCER : describe how the actions transform the states into the next state.
 import loginReducer from './reducers/loginReducer';
+import {Provider} from 'react-redux';
 
 //DISPATCH : dispatch (execute) an action to the reducer
 
 
-import {Provider} from 'react-redux';
+
 import thunk from 'redux-thunk';
 
 //Concat of all reducers:
 const rootReducer = combineReducers({
-	login:loginReducer
+  login:loginReducer  
 })
 
 //Creataion of the store : 
-const store = createStore(rootReducer, applyMiddleware(thunk));
-
+const store = createStore(rootReducer, 
+              applyMiddleware(thunk)
+);
 
 ReactDOM.render(
   <React.StrictMode>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+	  <Provider store={store}>
+		  <BrowserRouter>
+			<App />
+		  </BrowserRouter>
+	  </Provider>
   </React.StrictMode>,
   document.getElementById('root')
 );
