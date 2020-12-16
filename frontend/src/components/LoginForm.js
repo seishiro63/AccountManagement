@@ -2,7 +2,10 @@ import React from 'react';
 import {List, Form, Button} from 'semantic-ui-react';
 import {Link} from 'react-router-dom';
 
-export default class LoginForm extends React.Component {
+import {connect} from 'react-redux';
+import {login} from '../actions/loginActions';
+
+class LoginForm extends React.Component {
 
     constructor(props) {
         super(props);
@@ -30,7 +33,8 @@ export default class LoginForm extends React.Component {
              * TO DO
              * Encrypt the password to sent it to backend
              */
-            this.props.login(user);
+            //this.props.login(user);
+            this.props.dispatch(login(user));
         }
     } 
 
@@ -38,48 +42,49 @@ export default class LoginForm extends React.Component {
     render() {
         return (
             <div style={{width:500, margin:"auto", paddingTop:"20px", textAlign:"left"}}>
-            <Form>
-                <label>Please singin</label>
-                <List>
-                    <List.Item>
-                        <Form.Input fluid label='Login' 
-                                    placeholder='Login' 
-                                    name='login'
-                                    onChange={this.onChange}
-                                    value={this.state.login}/>
-                    </List.Item>
-                    <List.Item>
-                        <Form.Input fluid label='Password' 
-                                    placeholder='password' 
-                                    name='password'
-                                    type="password" 
-                                    onChange={this.onChange} 
-                                    value={this.state.password}/>
-                    </List.Item>
-                    <List.Item>
-                        <div style={{textAlign:"center"}}>
-                            <Button onClick={this.onSubmit} name="login">Login</Button>
-                        </div>
-                    </List.Item>
-                </List>
-            </Form>
-
-            <div style={{width:500, margin:"auto", paddingTop:"20px", textAlign:"left"}}>
                 <Form>
-                    <label>Or create an account</label>
+                    <label>Please singin</label>
                     <List>
                         <List.Item>
+                            <Form.Input fluid label='Login' 
+                                        placeholder='Login' 
+                                        name='login'
+                                        onChange={this.onChange}
+                                        value={this.state.login}/>
+                        </List.Item>
+                        <List.Item>
+                            <Form.Input fluid label='Password' 
+                                        placeholder='password' 
+                                        name='password'
+                                        type="password" 
+                                        onChange={this.onChange} 
+                                        value={this.state.password}/>
+                        </List.Item>
+                        <List.Item>
                             <div style={{textAlign:"center"}}>
-                                <Link to="/register">
-                                    <Button >Register</Button>
-                                </Link>
+                                <Button onClick={this.onSubmit} name="login">Login</Button>
                             </div>
                         </List.Item>
                     </List>
                 </Form>
-            </div>
 
+                <div style={{width:500, margin:"auto", paddingTop:"20px", textAlign:"left"}}>
+                    <Form>
+                        <label>Or create an account</label>
+                        <List>
+                            <List.Item>
+                                <div style={{textAlign:"center"}}>
+                                    <Link to="/register">
+                                        <Button >Register</Button>
+                                    </Link>
+                                </div>
+                            </List.Item>
+                        </List>
+                    </Form>
+                </div>
             </div>
         )
     }
 }
+
+export default connect()(LoginForm);

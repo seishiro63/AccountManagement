@@ -1,7 +1,7 @@
 import React from 'react';
 import {Table} from 'semantic-ui-react';
 
-import Row from './Row';
+import RowHome from './RowHome';
 import EditRow from './EditRow';
 
 
@@ -51,7 +51,7 @@ export default class AddActionList extends React.Component {
             }
 
             return (
-                <Row item={item} key={item.id}
+                <RowHome item={item} key={item.id}
                      handleEditButton={this.handleEditButton}
                 />
             )
@@ -60,13 +60,13 @@ export default class AddActionList extends React.Component {
         return (
             <Table striped>
                 <Table.Header>
-                    <Table.Row>
+                    <Table.RowHome>
                         <Table.HeaderCell>Action date</Table.HeaderCell>
                         <Table.HeaderCell>Label</Table.HeaderCell>
                         <Table.HeaderCell>Amount</Table.HeaderCell>
                         <Table.HeaderCell>Edit row</Table.HeaderCell>
                         <Table.HeaderCell></Table.HeaderCell>
-                    </Table.Row>
+                    </Table.RowHome>
                 </Table.Header>
                 <Table.Body>
                     {items}

@@ -26,7 +26,7 @@ export default class ConnexionHeaderForm extends React.Component {
                         <label htmlFor='logout' 
                                name='logout'
                                onClick={this.onSubmit}
-                               style={{paddingLeft:"20px", textAlign:"left"}}
+                               style={{paddingLeft:"20px", textAlign:"left", cursor:"pointer", TextDecoder:"underline"}}
                                >
                                 logout
                         </label>

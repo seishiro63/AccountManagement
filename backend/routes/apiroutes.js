@@ -45,7 +45,7 @@ router.post("/accountlist", function(req, res){
  * GET home
  *  Return summary of accounts for the logged user
  */
-router.get("/account", function(req, res){ //get command with request, respond
+router.get("/accountlist", function(req, res){ //get command with request, respond
     console.log("GET ACCOUNT Get command received on /api/account , sending list of account for user: " + req.session.login);
     let tempDatabase = databaseAccount.filter(item => item.login === req.session.login)
     console.log("GER ACCOUNT Done");

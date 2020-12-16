@@ -15,6 +15,7 @@ import AddActionForm from './components/ActionList/AddActionForm';
 import AddActionList from './components/ActionList/AddActionList';
 
 class App extends React.Component {
+
   constructor(props){
     super(props);
     this.state = {
@@ -29,6 +30,7 @@ class App extends React.Component {
   /***************************************************************
    * AUTH PART
    **************************************************************/
+  /*
   register = (user) => {
     let request = {
       method:"POST",
@@ -65,7 +67,7 @@ class App extends React.Component {
             login: user.login, //storing login for display.
 					},() => {
             //call the list
-            this.getList();
+            //this.getList("/api/accountlist");
 						this.saveToStorage();
 					})
 				}).catch(error => {
@@ -100,10 +102,11 @@ class App extends React.Component {
        }
      }).catch();
   }
-
+*/
   /**
    * Get all the accout for a user
    */
+/*
   getList = (path) => {
   let request = {
       method:"GET",
@@ -137,10 +140,11 @@ class App extends React.Component {
       console.log("Server respond whith an error. Reason: " + error);
     });
   }
-
+*/
   /*
    * Prevent loosing the session on refresh.
    */
+  /*
   componentDidMount() {
     if(sessionStorage.getItem("state")) {
       let state = JSON.parse(sessionStorage.getItem("state"));
@@ -149,10 +153,11 @@ class App extends React.Component {
       })
     }
   }
-
+*/
   /*
    * store the information returned by the server
    */
+  /*
   saveToStorage = () => {
     sessionStorage.setItem("state", JSON.stringify(this.state))
   }
@@ -167,7 +172,7 @@ class App extends React.Component {
       this.saveToStorage();
     })
   }
-
+*/
 
 
 
@@ -182,7 +187,19 @@ class App extends React.Component {
    * RENDER
    **************************************************************/ 
   render() {
+    return (
+      <div className="App">
+        <div className="header">
+          <ConnexionHeaderForm />
+          <NavBarForm/>
+        </div>
 
+        <div id="corps">
+            (<LoginForm/>)
+        </div>
+      </div>      
+    );
+/*
     return (
       <div className="App">
         <div className="header">
@@ -198,7 +215,7 @@ class App extends React.Component {
           <Route exact path="/" render={() => this.state.isLogged ?
             (<Redirect to="/home"/>) 
             :
-            (<LoginForm login={this.login}/>)
+            (<LoginForm/>)
           }/>
           <Route path="/register" render={() => this.state.isLogged ?
             (<Redirect to="/"/>)  
@@ -216,7 +233,15 @@ class App extends React.Component {
         </div>
       </div>      
     );
+    */
   }
+}
+
+const mapStateToProps = (state) => {
+	return {
+		token:state.login.token,
+		isLogged:state.login.isLogged
+	}
 }
 
 export default App;
