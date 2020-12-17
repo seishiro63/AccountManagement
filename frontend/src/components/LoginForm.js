@@ -43,7 +43,7 @@ class LoginForm extends React.Component {
         return (
             <div style={{width:500, margin:"auto", paddingTop:"20px", textAlign:"left"}}>
                 <Form>
-                    <label>Please singin</label>
+                    <label>Please signin</label>
                     <List>
                         <List.Item>
                             <Form.Input fluid label='Login' 
