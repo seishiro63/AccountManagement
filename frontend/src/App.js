@@ -41,15 +41,15 @@ class App extends React.Component {
 
         <div id="corps">
           <Switch>
-            <Route exact path="/" render={() => this.state.isLogged ?
+            <Route exact path="/" render={() => this.props.isLogged ?
               (<Redirect to="/home"/>) :
               (<LoginForm/>)
             }/>
-            <Route path="/register" render={() => this.state.isLogged ?
+            <Route path="/register" render={() => this.props.isLogged ?
               (<Redirect to="/"/>) :
               (<RegisterForm />)
             }/>
-            <Route path="/home" render={ () => this.state.isLogged ?
+            <Route path="/home" render={ () => this.props.isLogged ?
               (<HomeForm />) :
               (<Redirect to="/" />)
             } />
