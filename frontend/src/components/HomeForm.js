@@ -44,7 +44,8 @@ class HomeForm extends React.Component {
 //getting data from porps:
 const mapStateToProps = (state) => {
 	return {
-		token:state.login.token
+		token:state.login.token,
+		list:state.homeList.list
 	}
 }
 

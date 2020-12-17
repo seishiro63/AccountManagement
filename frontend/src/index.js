@@ -20,6 +20,7 @@ import {createStore,applyMiddleware,combineReducers} from 'redux';
 
 //REDUCER : describe how the actions transform the states into the next state.
 import loginReducer from './reducers/loginReducer';
+import homeReducer from './reducers/homeReducer';
 import {Provider} from 'react-redux';
 
 //DISPATCH : dispatch (execute) an action to the reducer
@@ -29,7 +30,8 @@ import thunk from 'redux-thunk';
 
 //Concat of all reducers:
 const rootReducer = combineReducers({
-  login:loginReducer  
+  login:loginReducer,
+  homelist:homeReducer
 })
 
 //Creataion of the store : 
