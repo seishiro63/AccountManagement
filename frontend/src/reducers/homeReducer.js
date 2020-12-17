@@ -4,32 +4,55 @@ import {
     CLEAR_HOME_LIST_STATE
 } from '../actions/homeActions';
 
+import {
+    LOADING,
+	LOADING_DONE
+} from '../actions/loginActions';
 
+/* home state
+	list: []
+*/
 const getInitialState = () => {
-	if(sessionStorage.getItem("loginstate")) {
-		let state = JSON.parse(sessionStorage.getItem("loginstate"));
+	if(sessionStorage.getItem("homestate")) {
+		let state = JSON.parse(sessionStorage.getItem("homestate"));
 		return state;
 	} else {
 		return {
-			list:[],
+            list:[],
+            loading:false,
 			error:""
 		}
 	}
 }
 
 const saveToStorage = (state) => {
-	sessionStorage.setItem("loginstate",JSON.stringify(state));
+	sessionStorage.setItem("homestate",JSON.stringify(state));
 }
 
 const initialState = getInitialState();
 
 const loginReducer = (state = initialState, action) => {
-	console.log("LoginReducer:",action);
+	console.log("HomeReducer:",action);
 	let tempState = {};
 	switch(action.type) {
+        case LOADING:
+			return {
+				...state,
+				loading:true,
+				error:""
+            }
+            
+		case LOADING_DONE:
+			return {
+				...state,
+				loading:false,
+				error:""
+            }
+
 		case FETCH_HOME_LIST_SUCCESS:
             tempState = {
-				list:action.list,
+                list:action.list,
+                loading:false,
 				error:""
 			}
 			saveToStorage(tempState);
@@ -37,7 +60,8 @@ const loginReducer = (state = initialState, action) => {
             
 		case FETCH_HOME_LIST_FAILED:
 			tempState = {
-				...state,
+                ...state,
+                loading:false,
 				error:action.error
 			}
 			saveToStorage(tempState);
@@ -45,11 +69,13 @@ const loginReducer = (state = initialState, action) => {
             
 		case CLEAR_HOME_LIST_STATE:
 			tempState = {
-				list:[],
+                list:[],
+                loading:false,
 				error:""
 			}
 			saveToStorage(tempState);
-			return tempState;
+            return tempState;
+            
 		default:
 			return state;
 	}

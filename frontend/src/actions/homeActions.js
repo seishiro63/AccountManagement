@@ -1,6 +1,5 @@
 import {loading,loadingDone,clearLoginState, CLEAR_LOGIN_STATE} from './loginActions';
 
-
 export const FETCH_HOME_LIST_SUCCESS = "FETCH_HOME_LIST_SUCCESS";
 export const FETCH_HOME_LIST_FAILED = "FETCH_HOME_LIST_FAILED";
 export const CLEAR_HOME_LIST_STATE = "CLEAR_HOME_LIST_STATE";
@@ -50,6 +49,7 @@ export const getList = (token,query) => {
 /**
  * ACTIONS
  */
+
 export const fetchHomelistSuccess = (list) => {
 	return {
 		type:FETCH_HOME_LIST_SUCCESS,

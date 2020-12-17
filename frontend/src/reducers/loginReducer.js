@@ -10,6 +10,13 @@ import {
 	CLEAR_LOGIN_STATE
 } from '../actions/loginActions';
 
+
+/* login state
+	isLogged:boolean,
+	token:string,
+	loading:boolean,
+	error:string
+*/
 const getInitialState = () => {
 	if(sessionStorage.getItem("loginstate")) {
 		let state = JSON.parse(sessionStorage.getItem("loginstate"));
@@ -23,13 +30,6 @@ const getInitialState = () => {
 		}
 	}
 }
-
-/* login state
-	isLogged:boolean,
-	token:string,
-	loading:boolean,
-	error:string
-*/
 
 const saveToStorage = (state) => {
 	sessionStorage.setItem("loginstate",JSON.stringify(state));
