@@ -1,10 +1,8 @@
 import React from 'react';
 import RowHome from './ActionList/RowHome';
-import {Form, Button, Table} from 'semantic-ui-react';
-import {Link} from 'react-router-dom';
 
 import {connect} from 'react-redux';
-
+import {getList} from '../actions/homeActions';
 
 class HomeForm extends React.Component {
    
@@ -21,7 +19,7 @@ class HomeForm extends React.Component {
      */    
     componentDidMount()  {
         console.log("HomeForm request list of account");
-        this.props.getList("/api/accountlist");
+        this.props.dispatch(getList("/api/accountlist"));
     }
     
     render() {
@@ -42,4 +40,12 @@ class HomeForm extends React.Component {
     }
 
 }
-export default connect()(HomeForm);
+
+//getting data from porps:
+const mapStateToProps = (state) => {
+	return {
+		token:state.login.token
+	}
+}
+
+export default connect(mapStateToProps)(HomeForm);

@@ -25,7 +25,6 @@ import {Provider} from 'react-redux';
 //DISPATCH : dispatch (execute) an action to the reducer
 
 
-
 import thunk from 'redux-thunk';
 
 //Concat of all reducers:
