@@ -19,7 +19,7 @@ const mysql = require("mysql");
 const config = require("./server.config");
 //const sqlresources = require("./SQL/resourcesSQL");
 //import {CreateTable} from './SQL/resourcesSQL.js';
-
+import CreateTable from './SQL/resourcesSQL.js';
 
 /**
  * Globales values
@@ -53,7 +53,7 @@ con.connect(function(err) {
         console.log("DB connexion: ok");    
     }
     //sqlresources.CreateTable(con);
-    //CreateTable(con);
+    CreateTable(con);
     
     
 });

@@ -3,7 +3,6 @@
  * 
  */
 
-let sql;
 
 /**
  * CreateTable
@@ -12,9 +11,9 @@ let sql;
  *  @returns true if correctly executed.
  */
 
-//export default function CreateTable(con){
+export default function CreateTable(con){
 //function CreateTable(con){
-sql.CreateTable(con){
+
     let sql = "CREATE TABLE IF NOT EXISTS users ( "
                     + "id INT AUTO_INCREMENT PRIMARY KEY, " 
                     + "username VARCHAR(50) UNIQUE, "
@@ -67,5 +66,3 @@ function ExecQuery(con, sql){
     })
     return true;
 }
-
-module.exports = sql;
