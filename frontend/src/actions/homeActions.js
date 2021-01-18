@@ -16,7 +16,7 @@ export const getList = (token,query) => {
 			headers:{"Content-type":"application/json",
 					token:token}
 		}
-		let url = "/api/shopping";
+		let url = "/api/accountlist";
 		if(query) {
 			url = url+"?type="+query
 		}
@@ -27,7 +27,7 @@ export const getList = (token,query) => {
 				response.json().then(data => {
 					dispatch(fetchHomelistSuccess(data));	
 				}).catch(error => {
-					dispatch(fetchHomelistFailed("Error parsing shopping information"));
+					dispatch(fetchHomelistFailed("Error parsing account information"));
 				});
 			} else {
 				if(response.status === 403) {

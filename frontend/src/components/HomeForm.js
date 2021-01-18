@@ -19,7 +19,7 @@ class HomeForm extends React.Component {
      */    
     componentDidMount()  {
         console.log("HomeForm request list of account");
-        this.props.dispatch(getList("/api/accountlist"));
+        this.props.dispatch(getList(this.props.token));
     }
     
     render() {
@@ -45,7 +45,7 @@ class HomeForm extends React.Component {
 const mapStateToProps = (state) => {
 	return {
 		token:state.login.token,
-		list:state.homeList.list
+		list:state.homelist.list
 	}
 }
 
