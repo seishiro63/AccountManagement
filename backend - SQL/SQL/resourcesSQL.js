@@ -11,8 +11,8 @@
  *  @returns true if correctly executed.
  */
 
-export default function CreateTable(con){
-//function CreateTable(con){
+//export default function CreateTable(con){
+function CreateTable(con){
 
     let sql = "CREATE TABLE IF NOT EXISTS users ( "
                     + "id INT AUTO_INCREMENT PRIMARY KEY, " 
@@ -65,4 +65,8 @@ function ExecQuery(con, sql){
 		console.log("Query executed ",result);
     })
     return true;
+}
+
+module.exports = {
+    CreateTable:CreateTable()
 }
